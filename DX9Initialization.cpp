@@ -22,6 +22,59 @@ BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 
+
+VOID Render()
+{
+    if (NULL == g_pd3dDevice)
+        return;
+
+    // Clear the backbuffer to a blue color
+    g_pd3dDevice->Clear(0, NULL, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 255), 1.0f, 0);
+
+    // Begin the scene
+    if (SUCCEEDED(g_pd3dDevice->BeginScene()))
+    {
+        // Rendering of scene objects can happen here
+
+
+
+        // End the scene
+        g_pd3dDevice->EndScene();
+    }
+
+    // Present the backbuffer contents to the display
+    g_pd3dDevice->Present(NULL, NULL, NULL, NULL);
+}
+
+HRESULT InitD3D(HWND hWnd)
+{
+    if (NULL == (g_pD3D = Direct3DCreate9(D3D_SDK_VERSION))) return E_FAIL;
+
+    D3DPRESENT_PARAMETERS d3dpp;
+    ZeroMemory(&d3dpp, sizeof(d3dpp));
+    d3dpp.Windowed = TRUE;
+    d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
+    d3dpp.BackBufferFormat = D3DFMT_UNKNOWN;
+
+    if (FAILED(g_pD3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWnd, D3DCREATE_SOFTWARE_VERTEXPROCESSING,
+        &d3dpp, &g_pd3dDevice)))
+    {
+        return E_FAIL;
+    }
+
+    return S_OK;
+}
+
+
+VOID Cleanup()
+{
+    if (g_pd3dDevice != NULL)
+        g_pd3dDevice->Release();
+    if (g_pD3D != NULL)
+        g_pD3D->Release();
+}
+
+
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
                      _In_ LPWSTR    lpCmdLine,
@@ -59,6 +112,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         else
         {
             // 업데이트와 렌더링하는 파트
+            Render();
         }
    }
 
@@ -122,24 +176,8 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    return TRUE;
 }
 
-HRESULT InitD3D(HWND hWnd)
-{
-    if (NULL == (g_pD3D  = Direct3DCreate9(D3D_SDK_VERSION)) ) return E_FAIL;
 
-    D3DPRESENT_PARAMETERS d3dpp;
-    ZeroMemory(&d3dpp, sizeof(d3dpp));
-    d3dpp.Windowed = TRUE;
-    d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
-    d3dpp.BackBufferFormat = D3DFMT_UNKNOWN;
-    
-    if (FAILED(g_pD3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWnd, D3DCREATE_SOFTWARE_VERTEXPROCESSING,
-        &d3dpp, &g_pd3dDevice)))
-    {
-        return E_FAIL;
-    }
 
-    return S_OK;
-}
 
 //
 //  함수: WndProc(HWND, UINT, WPARAM, LPARAM)
@@ -173,15 +211,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         }
         break;
     case WM_PAINT:
-        {
-            PAINTSTRUCT ps;
-            HDC hdc = BeginPaint(hWnd, &ps);
-            // TODO: 여기에 hdc를 사용하는 그리기 코드를 추가합니다...
-            EndPaint(hWnd, &ps);
-        }
+        Render();
         break;
     case WM_DESTROY:
-        PostQuitMessage(0);
+        Cleanup();
+        PostQuitMessage(0); // WM_QUIT 메시지 발생
         break;
     default:
         return DefWindowProc(hWnd, message, wParam, lParam);
