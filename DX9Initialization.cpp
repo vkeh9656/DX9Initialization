@@ -44,6 +44,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     }
     MSG msg;
 
+    InitD3D(g_hWnd);
+
     // 기본 메시지 루프입니다:
     while (true)
     {
