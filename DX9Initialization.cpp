@@ -3,6 +3,7 @@
 
 #include "framework.h"
 #include "DX9Initialization.h"
+#include <d3d9.h>
 
 #define MAX_LOADSTRING 100
 
@@ -11,6 +12,9 @@ HINSTANCE hInst;                                // 현재 인스턴스입니다.
 WCHAR szTitle[MAX_LOADSTRING];                  // 제목 표시줄 텍스트입니다.
 WCHAR szWindowClass[MAX_LOADSTRING];            // 기본 창 클래스 이름입니다.
 HWND g_hWnd;
+
+LPDIRECT3D9         g_pD3D = NULL;
+LPDIRECT3DDEVICE9   g_pd3dDevice = NULL;
 
 // 이 코드 모듈에 포함된 함수의 선언을 전달합니다:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -114,6 +118,25 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    UpdateWindow(hWnd);
 
    return TRUE;
+}
+
+HRESULT InitD3D(HWND hWnd)
+{
+    if (NULL == (g_pD3D  = Direct3DCreate9(D3D_SDK_VERSION)) ) return E_FAIL;
+
+    D3DPRESENT_PARAMETERS d3dpp;
+    ZeroMemory(&d3dpp, sizeof(d3dpp));
+    d3dpp.Windowed = TRUE;
+    d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
+    d3dpp.BackBufferFormat = D3DFMT_UNKNOWN;
+    
+    if (FAILED(g_pD3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWnd, D3DCREATE_SOFTWARE_VERTEXPROCESSING,
+        &d3dpp, &g_pd3dDevice)))
+    {
+        return E_FAIL;
+    }
+
+    return S_OK;
 }
 
 //
