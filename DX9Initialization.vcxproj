@@ -138,6 +138,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="CD3DApp.h" />
+    <ClInclude Include="CGameEdu01.h" />
     <ClInclude Include="DX9Initialization.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Resource.h" />
@@ -145,6 +146,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CD3DApp.cpp" />
+    <ClCompile Include="CGameEdu01.cpp" />
     <ClCompile Include="DX9Initialization.cpp" />
   </ItemGroup>
   <ItemGroup>
