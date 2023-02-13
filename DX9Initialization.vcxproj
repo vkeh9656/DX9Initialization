@@ -137,12 +137,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="CD3DApp.h" />
     <ClInclude Include="DX9Initialization.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CD3DApp.cpp" />
     <ClCompile Include="DX9Initialization.cpp" />
   </ItemGroup>
   <ItemGroup>
